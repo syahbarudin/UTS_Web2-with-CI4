@@ -23,4 +23,4 @@ Perintah yang dapat dijalankan untuk memanggil CLI Codeigniter adalah: php spark
 
 ini hasil dari programnya
 
-<video controls src="Web2_UTS.mp4" title="Title"></video>
+https://github.com/syahbarudin/UTS_Web2-with-CI4/assets/146621192/e5e0c583-5d76-49df-99fe-b294c96bb6e0
