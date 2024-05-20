@@ -12,6 +12,5 @@
     <a href="<?= site_url('profil') ?>">Profil</a>
     <a href="<?= site_url('auth/logout') ?>">Logout</a>
     <br>
-    
 </body>
 </html>
