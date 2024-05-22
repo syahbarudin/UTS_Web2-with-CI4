@@ -28,41 +28,42 @@ class AuthController extends BaseController
     }
 
     public function login()
-    {
-        $model = new UserModel();
-        $username = $this->request->getPost('username');
-        $password = $this->request->getPost('password');
+{
+    $model = new UserModel();
+    $username = $this->request->getPost('username');
+    $password = $this->request->getPost('password');
 
-        $user = $model->where('username', $username)->first();
+    $user = $model->where('username', $username)->first();
 
-        if ($user && password_verify($password, $user['password'])) {
-            session()->regenerate();
+    if ($user && password_verify($password, $user['password'])) {
+        session()->regenerate();
 
-            $session_id = session_id();
-            $device_info = $_SERVER['HTTP_USER_AGENT'];
-            $timestamp = date('Y-m-d H:i:s');
-            $is_new_device = $device_info !== $user['device_info'];
+        $session_id = session_id();
+        $device_info = $_SERVER['HTTP_USER_AGENT'];
+        $timestamp = date('Y-m-d H:i:s');
+        $is_new_device = $device_info !== $user['device_info'];
 
-            $data = [
-                'session_id' => $session_id,
-                'device_info' => $device_info,
-                'last_login' => $timestamp,
-                'last_device_info' => $user['device_info']
-            ];
+        $data = [
+            'session_id' => $session_id,
+            'device_info' => $device_info,
+            'last_login' => $timestamp,
+            'last_device_info' => $user['device_info']
+        ];
 
-            $model->update($user['id'], $data);
+        $model->update($user['id'], $data);
 
-            session()->set('user_id', $user['id']);
-            session()->set('session_id', $session_id);
-            session()->set('is_new_device', $is_new_device);
-            session()->set('username', $user['username']);
-            session()->set('login_time', date('H:i'));
+        // Simpan data waktu login dan nama pengguna ke dalam session
+        session()->set('user_id', $user['id']);
+        session()->set('username', $user['username']);
+        session()->set('login_time', date('H:i'));
+        session()->set('session_id', $session_id);
+        session()->set('is_new_device', $is_new_device);
 
-            return redirect()->to('home');
-        } else {
-            return redirect()->to('/')->with('error', 'Invalid username or password.');
-        }
+        return redirect()->to('home');
+    } else {
+        return redirect()->to('/')->with('error', 'kesalahan pada username or password.');
     }
+}
 
     public function logout()
     {
