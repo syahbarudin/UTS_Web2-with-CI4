@@ -3,16 +3,24 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Controllers\AuthController;
+use App\Models\UserModel;
+
 
 class HomeController extends BaseController
 {
     public function index()
     {
-        $auth = new AuthController();
-        if (!$auth->verify_session(session()->get('user_id'))) {
-            return redirect()->to('/'); // Redirect ke halaman login jika verifikasi gagal
+        $userModel = new UserModel(); // Memanggil UserModel
+
+        $user_id = session()->get('user_id');
+        $user = $userModel->find($user_id);
+
+        // Verifikasi IP address
+        if ($this->request->getIPAddress() !== $user['ip_address']) {
+            echo "<script>alert('Akun ini telah login diperangkat lain !'); window.location.href = '/';</script>";
+            return false;
         }
+        
         //Mengatur zona waktu untuk region indonesia
         date_default_timezone_set('Asia/Jakarta');
         // Ambil data waktu login dan nama pengguna dari session

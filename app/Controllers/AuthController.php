@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Controllers;
 
+use App\Controllers\BaseController;
 use App\Models\UserModel;
-use CodeIgniter\Controller;
 
 class AuthController extends BaseController
 {
@@ -28,42 +27,58 @@ class AuthController extends BaseController
     }
 
     public function login()
-{
-    $model = new UserModel();
-    $username = $this->request->getPost('username');
-    $password = $this->request->getPost('password');
+    {
+        $model = new UserModel();
+        $username = $this->request->getPost('username');
+        $password = $this->request->getPost('password');
 
-    $user = $model->where('username', $username)->first();
+        $user = $model->where('username', $username)->first();
 
-    if ($user && password_verify($password, $user['password'])) {
-        session()->regenerate();
+        if ($user && password_verify($password, $user['password'])) {
+            session()->regenerate();
 
-        $session_id = session_id();
-        $device_info = $_SERVER['HTTP_USER_AGENT'];
-        $timestamp = date('Y-m-d H:i:s');
-        $is_new_device = $device_info !== $user['device_info'];
+            $ip_address = $this->request->getIPAddress(); // Mendapatkan IP Address pengguna
+            $device_info = $_SERVER['HTTP_USER_AGENT'];
+            $timestamp = date('Y-m-d H:i:s');
+            $is_new_device = $device_info !== $user['device_info'];
+            $is_new_ip = $ip_address !== $user['ip_address'];
+            
+            if ($is_new_device || $is_new_ip) {
+                // Akhiri sesi sebelumnya
+                $this->terminatePreviousSession($user['id']);
+            }
 
+            $data = [
+                'ip_address' => $ip_address,
+                'device_info' => $device_info,
+                'last_login' => $timestamp
+            ];
+
+            $model->update($user['id'], $data);
+
+            // Simpan data waktu login dan nama pengguna ke dalam session
+            session()->set('user_id', $user['id']);
+            session()->set('username', $user['username']);
+            session()->set('login_time', date('H:i'));
+            session()->set('ip_address', $ip_address);
+            session()->set('is_new_device', $is_new_device);
+
+            return redirect()->to('home');
+        } else {
+            return redirect()->to('/')->with('error', 'Kesalahan username atau password.');
+        }
+    }
+
+    private function terminatePreviousSession($user_id)
+    {
+        $model = new UserModel();
         $data = [
-            'session_id' => $session_id,
-            'device_info' => $device_info,
-            'last_login' => $timestamp,
-            'last_device_info' => $user['device_info']
+            'ip_address' => null,
+            'device_info' => null,
         ];
 
-        $model->update($user['id'], $data);
-
-        // Simpan data waktu login dan nama pengguna ke dalam session
-        session()->set('user_id', $user['id']);
-        session()->set('username', $user['username']);
-        session()->set('login_time', date('H:i'));
-        session()->set('session_id', $session_id);
-        session()->set('is_new_device', $is_new_device);
-
-        return redirect()->to('home');
-    } else {
-        return redirect()->to('/')->with('error', 'kesalahan pada username or password.');
+        $model->update($user_id, $data);
     }
-}
 
     public function logout()
     {
@@ -76,16 +91,15 @@ class AuthController extends BaseController
         $model = new UserModel();
         $user = $model->find($user_id);
 
-        if (!$user) {
-            return false;
+        if ($user) {
+            $current_ip = $this->request->getIPAddress();
+            if ($user['ip_address'] !== $current_ip) {
+                session()->destroy();
+               
+                return false;
+            }
+            return true;
         }
-
-        if ($user['session_id'] !== session_id()) {
-            session()->destroy();
-            echo "<script>alert('Your account is logged in on another device.'); window.location.href = '/';</script>";
-            exit();
-        }
-
-        return true;
+        return false;
     }
 }

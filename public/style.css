@@ -108,3 +108,7 @@ body {
     margin: 10px 0;
     text-align: center;
 }
+
+.dropdown-menu {
+    display: none; /* Ensure dropdown menu is hidden by default */
+}
