@@ -8,5 +8,11 @@ class AbsensiModel extends Model
 {
     protected $table = 'absensi';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['tanggal', 'waktu', 'latitude', 'longitude', 'keterangan'];
+    protected $allowedFields = ['user_id', 'latitude', 'longitude'];
+
+    protected $useTimestamps = true;
+    protected $createdField = 'created_at';
+    protected $updatedField = null;
+
+    protected $returnType = 'object';
 }

@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="<?= base_url('style.css') ?>">
 
 <script src="<?= base_url('conf/script.js') ?>"></script>
+
+
     <link rel="icon" type="image/png" href="<?= base_url('assets/upb.png') ?>">
 </head>
 <body>

@@ -12,3 +12,4 @@ $routes->get('auth/logout', 'AuthController::logout');
 $routes->get('profil', 'ProfilController::index');
 $routes->get('home', 'HomeController::index');
 $routes->get('dosen', 'DosenController::index');
+$routes->post('/dosen/absen', 'DosenController::save');

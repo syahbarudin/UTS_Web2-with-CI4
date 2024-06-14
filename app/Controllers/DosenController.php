@@ -49,40 +49,25 @@ class DosenController extends BaseController
         ]);
     }
 
-    public function processAbsen()
+    public function save()
     {
-        // Validasi input
-        $validation = \Config\Services::validation();
-        $validation->setRules([
-            'latitude' => 'required',
-            'longitude' => 'required',
-        ]);
-        
-        if (!$validation->withRequest($this->request)->run()) {
-            // Jika validasi gagal, kirim pesan error
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => $validation->getErrors(),
-            ]);
-        }
-    
-        // Simpan data absen ke database atau proses sesuai kebutuhan
-        $absenModel = new AbsensiModel(); // Ganti dengan nama model yang sesuai
+        // Ambil data dari request POST
+        $request = $this->request->getJSON();
+        $tanggal = $request->tanggal;
+        $waktu = $request->waktu;
+        $lokasi = $request->lokasi;
+
+        // Simpan data absen ke dalam database (implementasi disesuaikan dengan struktur database Anda)
+        $absenModel = new \App\Models\AbsensiModel(); // Sesuaikan dengan model yang Anda gunakan
         $data = [
-            'latitude' => $this->request->getPost('latitude'),
-            'longitude' => $this->request->getPost('longitude'),
-            'user_id' => session()->get('user_id'),
-            'tanggal' => date('Y-m-d'),
-            'waktu' => date('H:i:s'),
+            'tanggal' => $tanggal,
+            'waktu' => $waktu,
+            'lokasi' => $lokasi
+            // Tambahkan kolom-kolom lain sesuai kebutuhan
         ];
-    
         $absenModel->insert($data);
-    
-        // Berhasil, kirim respons JSON
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Absen berhasil disimpan.',
-        ]);
+
+        // Respon ke client
+        return $this->response->setJSON(['status' => 'success']);
     }
-    
 }
