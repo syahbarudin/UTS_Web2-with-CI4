@@ -4,9 +4,9 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\UserModel;
+use App\Models\AbsensiModel;
 
-
-class HomeController extends BaseController
+class DosenController extends BaseController
 {
     public function index()
     {
@@ -41,11 +41,48 @@ class HomeController extends BaseController
         }
     
         // Tampilkan halaman home dengan menyertakan ucapan selamat dan nama pengguna
-        return view('home', [
+        return view('dosen', [
             'greeting' => $greeting,
             'username' => $username,
-            'title' => 'Home',
+            'title' => 'Dosen',
             'is_auth_page' => false
         ]);
-    }    
+    }
+
+    public function processAbsen()
+    {
+        // Validasi input
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'latitude' => 'required',
+            'longitude' => 'required',
+        ]);
+        
+        if (!$validation->withRequest($this->request)->run()) {
+            // Jika validasi gagal, kirim pesan error
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => $validation->getErrors(),
+            ]);
+        }
+    
+        // Simpan data absen ke database atau proses sesuai kebutuhan
+        $absenModel = new AbsensiModel(); // Ganti dengan nama model yang sesuai
+        $data = [
+            'latitude' => $this->request->getPost('latitude'),
+            'longitude' => $this->request->getPost('longitude'),
+            'user_id' => session()->get('user_id'),
+            'tanggal' => date('Y-m-d'),
+            'waktu' => date('H:i:s'),
+        ];
+    
+        $absenModel->insert($data);
+    
+        // Berhasil, kirim respons JSON
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Absen berhasil disimpan.',
+        ]);
+    }
+    
 }

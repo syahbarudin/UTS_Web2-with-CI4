@@ -41,4 +41,18 @@ class Validation extends BaseConfig
     // --------------------------------------------------------------------
     // Rules
     // --------------------------------------------------------------------
+    public $rules = [
+        'latitude' => 'required',
+        'longitude' => 'required',
+    ];
+    
+    public $messages = [
+        'latitude' => [
+            'required' => 'Latitude harus diisi.',
+        ],
+        'longitude' => [
+            'required' => 'Longitude harus diisi.',
+        ],
+    ];
+    
 }

@@ -1,15 +1,12 @@
 <?php $title = 'Home';
 include(APPPATH . 'Views/template/header.php'); ?>
 
-<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <div class="text-center">
-        <h1>
-        <p><?= $greeting ?>, <?= session()->get('username') ?></p></h1>
+<div class="container mx-auto p-4">
+    <div class="flex flex-col items-center justify-center min-h-screen">
+        <h1 class="text-3xl font-bold mb-4"><?= esc($greeting) ?>, <?= esc($username) ?>!</h1>
+        <p class="text-lg">Selamat datang di SIAKAD. Ini adalah halaman home Anda.</p>
+        <!-- Tombol untuk membuka modal absen -->
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+<?php include(APPPATH . 'Views/template/footer.php'); ?>

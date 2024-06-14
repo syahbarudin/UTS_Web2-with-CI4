@@ -141,4 +141,4 @@ CI_ENVIRONMENT = production
 #--------------------------------------------------------------------
 
 # curlrequest.shareOptions = false
-app.baseURL = ''
+#app.baseURL = '172.10.4.57'

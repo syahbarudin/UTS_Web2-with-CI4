@@ -112,3 +112,38 @@ body {
 .dropdown-menu {
     display: none; /* Ensure dropdown menu is hidden by default */
 }
+
+.custom-marker {
+    background-color: transparent;
+    border: none;
+}
+
+.marker-pin {
+    width: 30px;
+    height: 30px;
+    background-color: #5a67d8;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    cursor: pointer;
+    border: 2px solid #ffffff;
+}
+
+.marker-pin::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: #5a67d8;
+    left: 8px;
+    top: 8px;
+    border-radius: 50%;
+}
+#map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-container {
+            position: relative;
+            height: 400px; /* Adjust this height as needed */
+        }
