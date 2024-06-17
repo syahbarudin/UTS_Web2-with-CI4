@@ -10,23 +10,21 @@ class DosenController extends BaseController
 {
     public function index()
     {
-        $userModel = new UserModel(); // Memanggil UserModel
-
+        $userModel = new UserModel();
         $user_id = session()->get('user_id');
         $user = $userModel->find($user_id);
 
         // Verifikasi IP address
         if ($this->request->getIPAddress() !== $user['ip_address']) {
-            echo "<script>alert('Akun ini telah login diperangkat lain !'); window.location.href = '/';</script>";
+            echo "<script>alert('Akun ini telah login dari perangkat lain!'); window.location.href = '/';</script>";
             return false;
         }
-        
-        //Mengatur zona waktu untuk region indonesia
+
+        // Mengatur zona waktu untuk wilayah Indonesia
         date_default_timezone_set('Asia/Jakarta');
-        // Ambil data waktu login dan nama pengguna dari session
         $login_time = date('H:i');
         $username = session()->get('username');
-    
+
         // Tentukan ucapan selamat berdasarkan waktu login
         if ($login_time >= '00:00' && $login_time < '10:00') {
             $greeting = 'Selamat pagi';
@@ -39,7 +37,7 @@ class DosenController extends BaseController
         } else {
             $greeting = 'Selamat';
         }
-    
+
         // Tampilkan halaman home dengan menyertakan ucapan selamat dan nama pengguna
         return view('dosen', [
             'greeting' => $greeting,
@@ -49,25 +47,41 @@ class DosenController extends BaseController
         ]);
     }
 
-    public function save()
+    public function absen()
     {
         // Ambil data dari request POST
         $request = $this->request->getJSON();
         $tanggal = $request->tanggal;
+        $userId = session()->get('user_id');
         $waktu = $request->waktu;
         $lokasi = $request->lokasi;
 
-        // Simpan data absen ke dalam database (implementasi disesuaikan dengan struktur database Anda)
-        $absenModel = new \App\Models\AbsensiModel(); // Sesuaikan dengan model yang Anda gunakan
+        // Validasi input (jika diperlukan)
+        // $validation = \Config\Services::validation();
+        // $validation->setRules([
+        //     'tanggal' => 'required',
+        //     'waktu' => 'required',
+        //     'lokasi' => 'required'
+        // ]);
+        // if (!$validation->run($request)) {
+        //     return $this->response->setStatusCode(400)->setJSON(['error' => $validation->getErrors()]);
+        // }
+
+        // Simpan data absen ke dalam database
+        $absensiModel = new AbsensiModel();
         $data = [
+            'user_id' => $userId,
             'tanggal' => $tanggal,
             'waktu' => $waktu,
             'lokasi' => $lokasi
-            // Tambahkan kolom-kolom lain sesuai kebutuhan
+            // Tambahan kolom lain sesuai kebutuhan
         ];
-        $absenModel->insert($data);
 
-        // Respon ke client
+        // Lakukan penyimpanan data
+        $absensiModel->insert($data);
+
+        // Berikan respons ke client
         return $this->response->setJSON(['status' => 'success']);
     }
 }
+

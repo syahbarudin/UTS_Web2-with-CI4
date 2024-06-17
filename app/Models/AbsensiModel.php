@@ -8,11 +8,12 @@ class AbsensiModel extends Model
 {
     protected $table = 'absensi';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['user_id', 'latitude', 'longitude'];
+    protected $allowedFields = ['user_id', 'tanggal', 'waktu', 'lokasi'];
 
-    protected $useTimestamps = true;
-    protected $createdField = 'created_at';
-    protected $updatedField = null;
+    // Metode lain yang mungkin Anda tambahkan sesuai kebutuhan aplikasi
 
-    protected $returnType = 'object';
+    public function getAbsensiByUserId($userId)
+    {
+        return $this->where('user_id', $userId)->findAll();
+    }
 }
